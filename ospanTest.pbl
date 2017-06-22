@@ -1,3 +1,20 @@
+#=====TODO=====
+
+#lst:
+#-choose random word from words list for showing
+#-append showed word to a list
+#-create checkboxex with showed words for participants to choose the sequence
+#-append choosed words to a list
+#-compare 2 lists - get data
+#-add time limitation for test(1.5min max)
+#-add time count
+#-german song, foreign language song in .wav formats
+#-export data from math problems, lists comparison, 
+#time data(probably divide data from different test 
+#depending on choosed music composition ''test with music
+#without lyrics: math problem answers(true, false), 
+#right words sequence percentage, time spent on task)
+
 define Start(param)
 {
 	##Setup the screen
@@ -95,7 +112,7 @@ define Start(param)
 	#gSolutionsList <- FileReadList("assets/Solutions" + currentTest + ".txt");
 	gExpressionsList <- FileReadList("assets/ExpressionsShort.txt")
 	gSolutionsList <- FileReadList("assets/SolutionsShort.txt")
-	gWordsList <- FileReadList("assets/words.txt")
+	gWordsList <- FileReadList("assets/wordsLst.txt")
 	
 	rSize <- 150
 	

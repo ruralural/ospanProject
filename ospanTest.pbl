@@ -4,7 +4,7 @@
 #-choose random word from words list for showing
 #-append showed word to a list
 #-create checkboxex with showed words for participants to choose the sequence
-#-append choosed words to a list
+#-append choosed words to a list (create action box with every word and click on them in order to append to a list)
 #-compare 2 lists - get data
 #-add time limitation for test(1.5min max)
 #-add time count
@@ -14,7 +14,6 @@
 #depending on choosed music composition ''test with music
 #without lyrics: math problem answers(true, false), 
 #right words sequence percentage, time spent on task)
-#-add test description in the beginning and thx eventually
 
 define Start(param)
 {
@@ -48,7 +47,10 @@ define Start(param)
 	while (gSubNum == "") {
 		errorLabel <- MakeLabel("Bitte gib deine Identifikation-Nummer ein", gErrorFont)
 		Move(errorLabel, gWidth/2, 400)
-		DrawAndWait(errorLabel, gWindow, 1500)
+		AddObject(errorLabel, gWindow)
+		Draw()
+		Wait(1500)
+		Hide(errorLabel)
 		gSubNum <- GetSubNum(gWindow)
 	}
 
@@ -113,6 +115,8 @@ define Start(param)
 	circle1<- Circle (gWidth/2-rSize-50,480,rSize,gColorYel,1)
 	circ1Lable1 <- MakeLabel("if correct", lFont); Move(circ1Lable1, gWidth/2-rSize-50, 470)
 	circ1Lable2 <- MakeLabel("press A", lFont); Move(circ1Lable2, gWidth/2-rSize-50, 510)
+	button <- MakeButton("FUCK OFF",400,250,gWindow,150)
+	button.clickon <- "FuckOff"
 	AddObject(circle1,gWindow) #changed rect for circle!!!!!
 	AddObject(circ1Lable1,gWindow)
 	AddObject(circ1Lable2,gWindow)
@@ -122,8 +126,8 @@ define Start(param)
 	circ2Lable1 <- MakeLabel("if wrong", lFont); Move(circ2Lable1, gWidth/2+rSize+50, 470)
 	circ2Lable2 <- MakeLabel("press D", lFont); Move(circ2Lable2, gWidth/2+rSize+50, 510)
 	AddObject(circle2,gWindow)
-	AddObject(circ2Lable1,gWindow)
-	AddObject(circ2Lable2,gWindow)
+	AddObject(circ2Lable1, gWindow)
+	AddObject(circ2Lable2, gWindow)
 	
 	i <- 1
 
@@ -133,14 +137,40 @@ define Start(param)
 	current <-1
 	max <-2
 
-	sound <- LoadSound("noWords.wav")
+	gSound <- LoadSound("noWords.wav")
 	#PlaySound(sound)
-	PlayBackground(sound)
+	gPlay <- PlayBackground(gSound)
+	#resp <- WaitForClickOntarget([button],[1])
+
+	#CallFunction(button.clickon,[button,[0,0]])
+	#PushButton(button, S*top(sound))
 	ExecuteTest(i)
 	Stop(sound)
 	
+	#lstLabel <- MakeLabel(showedWords, gFontExp)
+	#Move(lstLabel, gWidth/2, 300)
+	#DrawAndWait(showedWords, gWindow, 10000)
+
+	x <- 1
+	loop(i, gShowedWords)
+	{
+		Print(i)
+		word <- Nth(gShowedWords, x)
+		wordLab <- MakeLabel(word, gFontExp)
+		Move(wordLab, gWidth/2, 600)
+		AddObject(wordLab, gWindow)
+		Draw()
+		Wait(2000)
+		#DrawAndWait(wordLab, gWindow, 2000)
+		x <- x + 1
+	}
 }
 
+
+define Intro(gWidth, gHeight, lFont)
+{
+	
+}
 
 define Outro(param){
 	##gExpressions <- FileOpenRead("assets/Expressions.txt");
@@ -166,13 +196,16 @@ define Outro(param){
 #}
 define ExecuteTest(iterator)
 {
-	while (iterator <= 5)
+	gShowedWords <-[]
+	while (iterator <= 3)
 	{
 		#sound <- LoadSound("noWords.wav")
 		
 		#PlaySound(sound)
 		expressionItem <- Nth(gExpressionsList,iterator)
-		wordItem <- Nth(gWordsList, iterator)
+		wordItem <- Nth(gWordsList, RandomDiscrete(100))
+		#gShowedWords <-[]
+		#gShowedWords <- PushOnEnd(gShowedWords, wordItem)
 
 		expressionLable <- MakeLabel(expressionItem, gFontExp); Move(expressionLable, gWidth/2, 150)
 		wordLable <- MakeLabel(wordItem, gFontExp)
@@ -199,10 +232,11 @@ define ExecuteTest(iterator)
 				iLable2 <- MakeLabel("WRONG", gErrorFont)
 			}
 			Move(iLable2, gWidth/2, 300)
-			DrawAndWait(iLable2, gWindow, 2000)
+			DrawAndWait(iLable2, gWindow, 500)
 
 			Move(wordLable, gWidth/2, 300)
-			DrawAndWait(wordLable, gWindow, 2000)
+			DrawAndWait(wordLable, gWindow, 500)
+			gShowedWords <- PushOnEnd(gShowedWords, wordItem)
 			
 			##Print(item)
 			iterator <- iterator + 1
@@ -210,7 +244,22 @@ define ExecuteTest(iterator)
 		}else{
 			iterator<- 99999
 		}
+
 	}
+	#x <- 1
+	#loop(i, gShowedWords)
+	#{
+		#Print(i)
+		#word <- Nth(gShowedWords, x)
+		#i <- MakeLabel(word, gFontExp)
+		#Move(i, gWidth/2, 300)
+		#DrawAndWait(i, gWindow, 2000)
+		#x <- x + 1
+	#}
+	#lstLabel <- MakeLabel(showedWords, gFontExp)
+	#Move(lstLabel, gWidth/2, 300)
+	#DrawAndWait(gShowedWords, gWindow, 10000)
+	return gShowedWords
 }
 
 define DrawAndWait(object, window, time)
@@ -219,4 +268,10 @@ define DrawAndWait(object, window, time)
 	Draw()
 	Wait(time)
 	Hide(object)
+}
+
+define FuckOff(obj, click)
+{
+	PushButton(obj, click)
+	gPlay <- Stop(gSound)
 }

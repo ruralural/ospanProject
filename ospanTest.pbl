@@ -1,0 +1,254 @@
+define Start(param)
+{
+	##Setup the screen
+	lBG <- MakeColorRGB(221, 223, 212)
+	gWindow <- MakeWindow(lBG)
+
+	##Screen dimensions
+	gWidth <- Nth(GetCurrentScreenResolution(), 1)
+	gHeight <- Nth(GetCurrentScreenResolution(), 2)
+
+	lBG <- MakeColorRGB(221, 223, 212)
+	lFG <- MakeColorRGB(23, 62, 67)
+	gColorRed <- MakeColorRGB(181, 105, 105)
+	gColorYel <- MakeColorRGB(250, 229, 150)
+	#gColorYel <- MakeColorRGB(249, 239, 204) 
+	
+	##Fontsize and font
+	gFontSize <- Round(gWidth/40)
+	lFont <- MakeFont("Calibri.ttf", 0, gFontSize, lFG,lBG,0)
+	gErrorFont <- MakeFont("Calibri.ttf", 0, gFontSize, gColorRed, gColorRed, 0)
+	gCorrectFont <- MakeFont("Calibri.ttf", 0, gFontSize, gColorYel, gColorYel, 0)
+
+	##Font settings for expression
+	gFontSizeExp <- 50
+	gFontExp <- MakeFont("Calibri.ttf", 0, gFontSizeExp, lFG,lBG,0)
+
+	gSubNum <- GetSubNum(gWindow)
+
+	#
+	while (gSubNum == "") {
+		errorLabel <- MakeLabel("Bitte gib deine Identifikation-Nummer ein", gErrorFont)
+		Move(errorLabel, gWidth/2, 400)
+		AddObject(errorLabel, gWindow)
+		Draw()
+		Wait(1500)
+		Hide(errorLabel)
+		gSubNum <- GetSubNum(gWindow)
+	}
+
+	noWordsTrack <- LoadSound("noWords.wav")
+	#StartPlayback(noWordsTrack)
+	#PlayBackground(noWordsTrack)
+	#Wait(10000)
+	#Stop(noWordsTrack)
+	#PausePlayback(noWordsTrack)
+	
+	#gResultsFile <- FileOpenAppend("results/" + gSubNum + ".csv");
+	#FilePrint(gFileOut, "")
+	
+	iLable <- MakeLabel("Welcome", lFont)
+	Move(iLable, gWidth/2, 50)
+	
+	iLable2 <- MakeLabel("This test is aimed at", lFont)
+	Move(iLable2, gWidth/2, 100)
+	
+	iLable3 <- MakeLabel("You will now be asked to", lFont)
+	Move(iLable3, gWidth/2, 150)
+	
+	iLable4 <- MakeLabel("Please put your headphones on and click gogogo", lFont)
+	Move(iLable4, gWidth/2, 200)
+	
+	AddObject(iLable, gWindow)
+	AddObject(iLable2, gWindow)
+	AddObject(iLable3, gWindow)
+	AddObject(iLable4, gWindow)
+	Draw()
+	Wait(1000)
+	
+	##Hide(iLable)
+	Hide(iLable2)
+	Hide(iLable3)
+	Hide(iLable4)
+	
+	
+	#
+	#noWordsTrack <- LoadAudioFile("noWords.wav")
+	#StartPlayback(noWordsTrack)
+	#PlayMovie(noWordsTrack)
+	#wait(200)
+	#Stop(noWordsTrack)
+	
+	currentTest <- RandomDiscrete(10)
+	
+	##for 3 tests
+	
+	
+	
+	currentTest <- currentTest +1
+	if (currentTest > 10){
+		currentTest <- 0
+	}
+	
+	#gExpressionsList <- FileReadList("assets/Expressions" + currentTest +".txt")
+	#gSolutionsList <- FileReadList("assets/Solutions" + currentTest + ".txt");
+	gExpressionsList <- FileReadList("assets/ExpressionsShort.txt")
+	gSolutionsList <- FileReadList("assets/SolutionsShort.txt")
+
+	
+	rSize <- 150
+	
+	
+	
+	#circ1<- Rectangle (gWidth/2-rSize,480,rSize,rSize,MakeColorRGB(250, 229, 150),1)
+	circle1<- Circle (gWidth/2-rSize-50,480,rSize,gColorYel,1)
+	circ1Lable1 <- MakeLabel("if correct", lFont); Move(circ1Lable1, gWidth/2-rSize-50, 470)
+	circ1Lable2 <- MakeLabel("press A", lFont); Move(circ1Lable2, gWidth/2-rSize-50, 510)
+	AddObject(circle1,gWindow) #changed rect for circle!!!!!
+	AddObject(circ1Lable1,gWindow)
+	AddObject(circ1Lable2,gWindow)
+	
+	#circ2<- Rectangle (gWidth/2+rSize,480,rSize,rSize,MakeColorRGB(181, 105, 105),1)
+	circle2<- Circle (gWidth/2+rSize+50,480,rSize,MakeColorRGB(181, 105, 105),1)
+	circ2Lable1 <- MakeLabel("if wrong", lFont); Move(circ2Lable1, gWidth/2+rSize+50, 470)
+	circ2Lable2 <- MakeLabel("press D", lFont); Move(circ2Lable2, gWidth/2+rSize+50, 510)
+	AddObject(circle2,gWindow)
+	AddObject(circ2Lable1,gWindow)
+	AddObject(circ2Lable2,gWindow)
+	
+	i <- 1
+
+	noLyricsTestIteration <- 0
+	foreignLyricsTestIteration <- 0
+	lyricsTestIteration <- 0
+	current <-1
+	max <-2
+
+	sound <- LoadSound("noWords.wav")
+	#PlaySound(sound)
+	PlayBackground(sound)
+	ExecuteTest(i)
+	Stop(sound)
+
+	while (i <= 10)
+	{
+		#sound <- LoadSound("noWords.wav")
+		
+		#PlaySound(sound)
+		item <- Nth(gExpressionsList,i)
+		
+		iLable <- MakeLabel(item, gFontExp)
+		Move(iLable, gWidth/2, 150)
+		AddObject(iLable, gWindow)
+		Draw()
+		#PlaySound(sound, i)
+		
+		response <-Uppercase(WaitForListKeyPress(["A","D","L"]))
+		##L = quit
+		if(response != "L"){
+			if(response == "A"){
+				answer <- "1"
+			}else{
+				answer <- "0"
+			}
+
+			rightAnswer <- Nth(gSolutionsList, i)
+
+			if(answer == rightAnswer){
+				iLable2 <- MakeLabel("Correct", gCorrectFont)
+				
+			}else{
+				iLable2 <- MakeLabel("WRONG", gErrorFont)
+			}
+			Move(iLable2, gWidth/2, 300)
+			
+			AddObject(iLable2,gWindow)
+			Draw()
+			Wait(2000)
+			Hide(iLable2)
+			
+			##Print(item)
+			i <- i + 1
+			#ReturnI(i)
+		}else{
+			i<- 99999
+		}
+	}
+	
+}
+
+
+define Intro(gWidth, gHeight, lFont)
+{
+	
+}
+
+define Outro(param){
+	##gExpressions <- FileOpenRead("assets/Expressions.txt");
+	ggExpressionsList <- FileReadList("assets/Expressions.txt")
+	##gSolutions <- FileOpenRead("assets/SolutionsShort.txt");
+	
+
+}
+
+#define PlaySound(sound)
+#{
+	#PlayBackground(sound)
+	#Wait(10000)
+	#if (iteration > 5)
+	#{
+	#	Stop(sound)
+	#}
+	#PausePlayback(noWordsTrack)
+#}
+#define ReturnI(param)
+#{
+	#return param
+#}
+define ExecuteTest(iterator)
+{
+	while (iterator <= 5)
+	{
+		#sound <- LoadSound("noWords.wav")
+		
+		#PlaySound(sound)
+		item <- Nth(gExpressionsList,iterator)
+		
+		iLable <- MakeLabel(item, gFontExp)
+		Move(iLable, gWidth/2, 150)
+		AddObject(iLable, gWindow)
+		Draw()
+		#PlaySound(sound, i)
+		
+		response <-Uppercase(WaitForListKeyPress(["A","D","L"]))
+		##L = quit
+		if(response != "L"){
+			if(response == "A"){
+				answer <- "1"
+			}else{
+				answer <- "0"
+			}
+
+			rightAnswer <- Nth(gSolutionsList, iterator)
+
+			if(answer == rightAnswer){
+				iLable2 <- MakeLabel("Correct", gCorrectFont)
+				
+			}else{
+				iLable2 <- MakeLabel("WRONG", gErrorFont)
+			}
+			Move(iLable2, gWidth/2, 300)
+			
+			AddObject(iLable2,gWindow)
+			Draw()
+			Wait(2000)
+			Hide(iLable2)
+			
+			##Print(item)
+			iterator <- iterator + 1
+			#ReturnI(i)
+		}else{
+			iterator<- 99999
+		}
+	}
+}

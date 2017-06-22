@@ -90,11 +90,12 @@ define Start(param)
 		currentTest <- 0
 	}
 	
+	#Defining all needed arrays
 	#gExpressionsList <- FileReadList("assets/Expressions" + currentTest +".txt")
 	#gSolutionsList <- FileReadList("assets/Solutions" + currentTest + ".txt");
 	gExpressionsList <- FileReadList("assets/ExpressionsShort.txt")
 	gSolutionsList <- FileReadList("assets/SolutionsShort.txt")
-
+	gWordsList <- FileReadList("assets/words.txt")
 	
 	rSize <- 150
 	
@@ -129,51 +130,6 @@ define Start(param)
 	PlayBackground(sound)
 	ExecuteTest(i)
 	Stop(sound)
-
-	while (i <= 10)
-	{
-		#sound <- LoadSound("noWords.wav")
-		
-		#PlaySound(sound)
-		item <- Nth(gExpressionsList,i)
-		
-		iLable <- MakeLabel(item, gFontExp)
-		Move(iLable, gWidth/2, 150)
-		AddObject(iLable, gWindow)
-		Draw()
-		#PlaySound(sound, i)
-		
-		response <-Uppercase(WaitForListKeyPress(["A","D","L"]))
-		##L = quit
-		if(response != "L"){
-			if(response == "A"){
-				answer <- "1"
-			}else{
-				answer <- "0"
-			}
-
-			rightAnswer <- Nth(gSolutionsList, i)
-
-			if(answer == rightAnswer){
-				iLable2 <- MakeLabel("Correct", gCorrectFont)
-				
-			}else{
-				iLable2 <- MakeLabel("WRONG", gErrorFont)
-			}
-			Move(iLable2, gWidth/2, 300)
-			
-			AddObject(iLable2,gWindow)
-			Draw()
-			Wait(2000)
-			Hide(iLable2)
-			
-			##Print(item)
-			i <- i + 1
-			#ReturnI(i)
-		}else{
-			i<- 99999
-		}
-	}
 	
 }
 
@@ -212,12 +168,14 @@ define ExecuteTest(iterator)
 		#sound <- LoadSound("noWords.wav")
 		
 		#PlaySound(sound)
-		item <- Nth(gExpressionsList,iterator)
-		
-		iLable <- MakeLabel(item, gFontExp)
-		Move(iLable, gWidth/2, 150)
-		AddObject(iLable, gWindow)
+		expressionItem <- Nth(gExpressionsList,iterator)
+		wordItem <- Nth(gWordsList, iterator)
+
+		expressionLable <- MakeLabel(expressionItem, gFontExp); Move(expressionLable, gWidth/2, 150)
+		wordLable <- MakeLabel(wordItem, gFontExp)
+		AddObject(expressionLable, gWindow)
 		Draw()
+
 		#PlaySound(sound, i)
 		
 		response <-Uppercase(WaitForListKeyPress(["A","D","L"]))
@@ -238,11 +196,10 @@ define ExecuteTest(iterator)
 				iLable2 <- MakeLabel("WRONG", gErrorFont)
 			}
 			Move(iLable2, gWidth/2, 300)
-			
-			AddObject(iLable2,gWindow)
-			Draw()
-			Wait(2000)
-			Hide(iLable2)
+			DrawAndWait(iLable2, gWindow, 2000)
+
+			Move(wordLable, gWidth/2, 300)
+			DrawAndWait(wordLable, gWindow, 2000)
 			
 			##Print(item)
 			iterator <- iterator + 1
@@ -251,4 +208,12 @@ define ExecuteTest(iterator)
 			iterator<- 99999
 		}
 	}
+}
+
+define DrawAndWait(object, window, time)
+{
+	AddObject(object, window)
+	Draw()
+	Wait(time)
+	Hide(object)
 }

@@ -1,4 +1,4 @@
-#=====TODO=====
+#=====TODO====
 
 #lst:
 #-choose random word from words list for showing
@@ -55,11 +55,6 @@ define Start(param)
 	}
 
 	noWordsTrack <- LoadSound("noWords.wav")
-	#StartPlayback(noWordsTrack)
-	#PlayBackground(noWordsTrack)
-	#Wait(10000)
-	#Stop(noWordsTrack)
-	#PausePlayback(noWordsTrack)
 	
 	#gResultsFile <- FileOpenAppend("results/" + gSubNum + ".csv");
 	#FilePrint(gFileOut, "")
@@ -83,17 +78,12 @@ define Start(param)
 	Draw()
 	Wait(1000)
 	
-	##Hide(iLable)
 	Hide(iLable2)
 	Hide(iLable3)
 	Hide(iLable4)
 	
 	
 	currentTest <- RandomDiscrete(10)
-	
-	##for 3 tests
-	
-	
 	
 	currentTest <- currentTest +1
 	if (currentTest > 10){
@@ -110,19 +100,16 @@ define Start(param)
 	rSize <- 150
 	
 	
-	
-	#circ1<- Rectangle (gWidth/2-rSize,480,rSize,rSize,MakeColorRGB(250, 229, 150),1)
 	circle1<- Circle (gWidth/2-rSize-50,480,rSize,gColorYel,1)
 	circ1Lable1 <- MakeLabel("if correct", lFont); Move(circ1Lable1, gWidth/2-rSize-50, 470)
 	circ1Lable2 <- MakeLabel("press A", lFont); Move(circ1Lable2, gWidth/2-rSize-50, 510)
-	button <- MakeButton("FUCK OFF",400,250,gWindow,150)
-	button.clickon <- "FuckOff"
-	AddObject(circle1,gWindow) #changed rect for circle!!!!!
+	#button <- MakeButton("FUCK OFF",400,250,gWindow,150)
+	#button.clickon <- "FuckOff"
+	AddObject(circle1,gWindow) 
 	AddObject(circ1Lable1,gWindow)
 	AddObject(circ1Lable2,gWindow)
 	
-	#circ2<- Rectangle (gWidth/2+rSize,480,rSize,rSize,MakeColorRGB(181, 105, 105),1)
-	circle2<- Circle (gWidth/2+rSize+50,480,rSize,MakeColorRGB(181, 105, 105),1)
+	circle2<- Circle (gWidth/2+rSize+50,480,rSize,gColorRed,1)
 	circ2Lable1 <- MakeLabel("if wrong", lFont); Move(circ2Lable1, gWidth/2+rSize+50, 470)
 	circ2Lable2 <- MakeLabel("press D", lFont); Move(circ2Lable2, gWidth/2+rSize+50, 510)
 	AddObject(circle2,gWindow)
@@ -131,39 +118,82 @@ define Start(param)
 	
 	i <- 1
 
-	noLyricsTestIteration <- 0
-	foreignLyricsTestIteration <- 0
-	lyricsTestIteration <- 0
-	current <-1
-	max <-2
-
 	gSound <- LoadSound("noWords.wav")
-	#PlaySound(sound)
 	gPlay <- PlayBackground(gSound)
 	#resp <- WaitForClickOntarget([button],[1])
 
 	#CallFunction(button.clickon,[button,[0,0]])
 	#PushButton(button, S*top(sound))
+
+
 	ExecuteTest(i)
-	Stop(sound)
+
+	Hide(circle1);Hide(circ1Lable1);Hide(circ1Lable2);Hide(circle2);Hide(circ2Lable1);Hide(circ2Lable2)
+	iLable <- MakeLabel("Enter sequence of words withouth spaces and hit the enter", lFont)
+	Move(iLable, gWidth/2, 50)
+	AddObject(iLable, gWindow)
+	#tb <- EasyTextBox("Enter sequence of words withouth spaces and hit the enter",gWidth/2, 480,gWindow, gFontSize,200,30)
+	tb <-MakeTextBox("",gFontExp,400,400)
+    AddObject(tb,gWindow)
+    Move(tb,gWidth/2 - 200,480)
+    Show(tb)
+	input <- GetInput(tb, "<return>")
+	gShowedWords <- ListToString(gShowedWords)
+
+
+	if(input==gShowedWords)
+	{
+		answer <- "1"
+		label <- MakeLabel("Correct", gCorrectFont)		
+	}else{
+		answer <- "0"
+		label <- MakeLabel("WRONG", gErrorFont)
+	}
+
+	Move(label, gWidth/2, 300)
+	DrawAndWait(label, gWindow, 500)
+
+
+
+	Stop(gSound)
 	
 	#lstLabel <- MakeLabel(showedWords, gFontExp)
 	#Move(lstLabel, gWidth/2, 300)
 	#DrawAndWait(showedWords, gWindow, 10000)
 
+
+
+
+	#circle1<- Circle (gWidth/2-rSize-300,480,rSize,gColorYel,1)
+	#circle2<- Circle (gWidth/2,480,rSize,gColorRed,1)
+	#circle3<- Circle (gWidth/2+rSize+300,480,rSize,MakeColorRGB(197, 213, 203),1)
+	#AddObject(circle1,gWindow)
+	#AddObject(circle2,gWindow)
+	#AddObject(circle3,gWindow)
+	#Draw()
+	#Wait(3000)
 	x <- 1
-	loop(i, gShowedWords)
-	{
-		Print(i)
-		word <- Nth(gShowedWords, x)
-		wordLab <- MakeLabel(word, gFontExp)
-		Move(wordLab, gWidth/2, 600)
-		AddObject(wordLab, gWindow)
-		Draw()
-		Wait(2000)
+	#y <- 500
+	#gShowedWords <- ListToString(gShowedWords)
+	#wordLab <- MakeLabel(gShowedWords, gFontExp)
+	#Move(wordLab, gWidth/2, y)
+	#DrawAndWait(wordLab, gWindow, 2000)
+	#loop(i, gShowedWords)
+	#{
+		#Print(i)
+		#word <- Nth(gShowedWords, x)
+		#wordLab <- MakeLabel(word, gFontExp)
+		#Move(wordLab, gWidth/2, y)
+		#AddObject(wordLab, gWindow)
+		#Draw()
+		#Wait(200)
 		#DrawAndWait(wordLab, gWindow, 2000)
-		x <- x + 1
-	}
+		#gShowedWords <- Rest(gShowedWords)
+		#x <- x + 1
+		#y <- y - 20
+	#}
+
+
 }
 
 
@@ -180,24 +210,10 @@ define Outro(param){
 
 }
 
-#define PlaySound(sound)
-#{
-	#PlayBackground(sound)
-	#Wait(10000)
-	#if (iteration > 5)
-	#{
-	#	Stop(sound)
-	#}
-	#PausePlayback(noWordsTrack)
-#}
-#define ReturnI(param)
-#{
-	#return param
-#}
 define ExecuteTest(iterator)
 {
 	gShowedWords <-[]
-	while (iterator <= 3)
+	while (iterator <= 2)
 	{
 		#sound <- LoadSound("noWords.wav")
 		

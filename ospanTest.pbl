@@ -14,6 +14,7 @@
 #depending on choosed music composition ''test with music
 #without lyrics: math problem answers(true, false), 
 #right words sequence percentage, time spent on task)
+#-add test description in the beginning and thx eventually
 
 define Start(param)
 {
@@ -88,13 +89,6 @@ define Start(param)
 	Hide(iLable3)
 	Hide(iLable4)
 	
-	
-	#
-	#noWordsTrack <- LoadAudioFile("noWords.wav")
-	#StartPlayback(noWordsTrack)
-	#PlayMovie(noWordsTrack)
-	#wait(200)
-	#Stop(noWordsTrack)
 	
 	currentTest <- RandomDiscrete(10)
 	

@@ -48,10 +48,7 @@ define Start(param)
 	while (gSubNum == "") {
 		errorLabel <- MakeLabel("Bitte gib deine Identifikation-Nummer ein", gErrorFont)
 		Move(errorLabel, gWidth/2, 400)
-		AddObject(errorLabel, gWindow)
-		Draw()
-		Wait(1500)
-		Hide(errorLabel)
+		DrawAndWait(errorLabel, gWindow, 1500)
 		gSubNum <- GetSubNum(gWindow)
 	}
 
@@ -144,11 +141,6 @@ define Start(param)
 	
 }
 
-
-define Intro(gWidth, gHeight, lFont)
-{
-	
-}
 
 define Outro(param){
 	##gExpressions <- FileOpenRead("assets/Expressions.txt");

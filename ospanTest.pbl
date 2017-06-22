@@ -43,7 +43,6 @@ define Start(param)
 
 	gSubNum <- GetSubNum(gWindow)
 
-	#
 	while (gSubNum == "") {
 		errorLabel <- MakeLabel("Bitte gib deine Identifikation-Nummer ein", gErrorFont)
 		Move(errorLabel, gWidth/2, 400)
@@ -141,17 +140,7 @@ define Start(param)
 	gShowedWords <- ListToString(gShowedWords)
 
 
-	if(input==gShowedWords)
-	{
-		answer <- "1"
-		label <- MakeLabel("Correct", gCorrectFont)		
-	}else{
-		answer <- "0"
-		label <- MakeLabel("WRONG", gErrorFont)
-	}
-
-	Move(label, gWidth/2, 300)
-	DrawAndWait(label, gWindow, 500)
+	CheckWords(gShowedWords)
 
 
 
@@ -196,20 +185,6 @@ define Start(param)
 
 }
 
-
-define Intro(gWidth, gHeight, lFont)
-{
-	
-}
-
-define Outro(param){
-	##gExpressions <- FileOpenRead("assets/Expressions.txt");
-	ggExpressionsList <- FileReadList("assets/Expressions.txt")
-	##gSolutions <- FileOpenRead("assets/SolutionsShort.txt");
-	
-
-}
-
 define ExecuteTest(iterator)
 {
 	gShowedWords <-[]
@@ -227,8 +202,6 @@ define ExecuteTest(iterator)
 		wordLable <- MakeLabel(wordItem, gFontExp)
 		AddObject(expressionLable, gWindow)
 		Draw()
-
-		#PlaySound(sound, i)
 		
 		response <-Uppercase(WaitForListKeyPress(["A","D","L"]))
 		##L = quit
@@ -254,27 +227,12 @@ define ExecuteTest(iterator)
 			DrawAndWait(wordLable, gWindow, 500)
 			gShowedWords <- PushOnEnd(gShowedWords, wordItem)
 			
-			##Print(item)
 			iterator <- iterator + 1
-			#ReturnI(i)
 		}else{
 			iterator<- 99999
 		}
 
 	}
-	#x <- 1
-	#loop(i, gShowedWords)
-	#{
-		#Print(i)
-		#word <- Nth(gShowedWords, x)
-		#i <- MakeLabel(word, gFontExp)
-		#Move(i, gWidth/2, 300)
-		#DrawAndWait(i, gWindow, 2000)
-		#x <- x + 1
-	#}
-	#lstLabel <- MakeLabel(showedWords, gFontExp)
-	#Move(lstLabel, gWidth/2, 300)
-	#DrawAndWait(gShowedWords, gWindow, 10000)
 	return gShowedWords
 }
 
@@ -286,8 +244,17 @@ define DrawAndWait(object, window, time)
 	Hide(object)
 }
 
-define FuckOff(obj, click)
+define CheckWords(lst)
 {
-	PushButton(obj, click)
-	gPlay <- Stop(gSound)
+	if(input==lst)
+	{
+		answer <- "1"
+		label <- MakeLabel("Correct", gCorrectFont)		
+	}else{
+		answer <- "0"
+		label <- MakeLabel("WRONG", gErrorFont)
+	}
+
+	Move(label, gWidth/2, 300)
+	DrawAndWait(label, gWindow, 500)
 }

@@ -18,24 +18,31 @@ define Start(param)
 	gWidth <- Nth(GetCurrentScreenResolution(), 1)
 	gHeight <- Nth(GetCurrentScreenResolution(), 2)
 
+	#Palette
 	lBG <- MakeColorRGB(221, 223, 212)
 	lFG <- MakeColorRGB(23, 62, 67)
 	gColorRed <- MakeColorRGB(181, 105, 105)
 	gColorYel <- MakeColorRGB(250, 229, 150)
-	#gColorYel <- MakeColorRGB(249, 239, 204) 
 	
 	##Fontsize and font
 	gFontSize <- Round(gWidth/40)
 	gFont <- MakeFont("Calibri.ttf", 0, gFontSize, lFG,lBG,0)
 	gErrorFont <- MakeFont("Calibri.ttf", 0, gFontSize, gColorRed, gColorRed, 0)
 	gCorrectFont <- MakeFont("Calibri.ttf", 0, gFontSize, gColorYel, gColorYel, 0)
+	grSize <- 150
 
 	##Font settings for expression
 	gFontSizeExp <- 50
 	gFontExp <- MakeFont("Calibri.ttf", 0, gFontSizeExp, lFG,lBG,0)
+	
+	#Iter vars
+	i <- 1
+	trialIter <- 2
 
+	#Get ID 
 	gSubNum <- GetSubNum(gWindow)
 
+	#Deal with absence of ID
 	while (gSubNum == "") {
 		errorLabel <- MakeLabel("Bitte gib deine Identifikation-Nummer ein", gErrorFont)
 		Move(errorLabel, gWidth/2, 400)
@@ -46,6 +53,7 @@ define Start(param)
 		gSubNum <- GetSubNum(gWindow)
 	}
 	
+	#Compose CSV
 	gResultsFile <- FileOpenAppend("results/" + gSubNum + ".csv");
 	FilePrint(gResultsFile, "Correct answers;Total;Percent")
 	
@@ -54,7 +62,7 @@ define Start(param)
 	
 	iLable2 <- MakeLabel("This test is aimed mainly at testing your memory and ability to focus",gFont)
 	Move(iLable2, gWidth/2, 100)
-	#MessageBox("This test is aimed at testing your concentration while you perception may be affected by different background music", gWindow)
+	#MessageBox("This test is aimed at testing your concentration while you perception may be affected by different background music.", gWindow)
 	
 	iLable3 <- MakeLabel("You will now be asked to give simple answers on the sequence of mathematical problems", gFont)
 	Move(iLable3, gWidth/2, 150)
@@ -65,24 +73,28 @@ define Start(param)
 	iLable5 <- MakeLabel("and eventually recall every word in showed sequence writing it down.", gFont)
 	Move(iLable5, gWidth/2, 250)
 
-	iLable5 <- MakeLabel("To give you a glance the test round will be introduced. Please put headphones on and hit the enter to proceed.", gFont)
-	Move(iLable5, gWidth/2, 300)
+	iLable6 <- MakeLabel("To give you a glance the test round will be introduced.", gFont)
+	Move(iLable6, gWidth/2, 300)
 
-	iLable5 <- MakeLabel("Please put headphones on and press enter to proceed.", gFont)
-	Move(iLable5, gWidth/2, 300)
+	iLable7 <- MakeLabel("Please put headphones on and press enter to proceed.", gFont)
+	Move(iLable7, gWidth/2, 350)
 	
 	AddObject(gLable, gWindow)
 	AddObject(iLable2, gWindow)
 	AddObject(iLable3, gWindow)
 	AddObject(iLable4, gWindow)
 	AddObject(iLable5, gWindow)
+	AddObject(iLable6, gWindow)
+	AddObject(iLable7, gWindow)
 	Draw()
-	Wait(10000)
+	Wait(10000) #CHANGE FOR PRESSING ANY KEY ACTION TO proceed
 	
 	Hide(iLable2)
 	Hide(iLable3)
 	Hide(iLable4)
 	Hide(iLable5)
+	Hide(iLable6)
+	Hide(iLable7)
 	
 	currentTest <- RandomDiscrete(10)
 	
@@ -92,15 +104,13 @@ define Start(param)
 	}
 	
 	#Defining all needed arrays
-	#gExpressionsList <- FileReadList("assets/Expressions" + currentTest +".txt")
-	#gSolutionsList <- FileReadList("assets/Solutions" + currentTest + ".txt");
-	gExpressionsList <- FileReadList("assets/ExpressionsShort.txt")
-	gSolutionsList <- FileReadList("assets/SolutionsShort.txt")
+	gExpressionsList <- FileReadList("assets/Expressions" + currentTest +".txt")
+	gSolutionsList <- FileReadList("assets/Solutions" + currentTest + ".txt");
+	#gExpressionsList <- FileReadList("assets/ExpressionsShort.txt")
+	#gSolutionsList <- FileReadList("assets/SolutionsShort.txt")
 	gWordsList <- FileReadList("assets/wordsLst.txt")
 	
-	grSize <- 150
-	i <- 1
-	trialIter <- 2
+	#Instantiation of the audio stimuli
 	noLyricsMusic <- "noLyrics.wav"
 	lyricsMusic <- "germanLyrics.wav"
 	foreignLyricsMusic <- "foreignLyrics.wav"

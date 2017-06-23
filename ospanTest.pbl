@@ -1,15 +1,12 @@
 #=====TODO====
 
 #lst:
-#-compare 2 lists - get data
 #-add time limitation for test(1.5min max)
-#-add time count
-#-german song, foreign language song in .wav formats
-#-export data from math problems, lists comparison, 
-#time data(probably divide data from different test 
-#depending on choosed music composition ''test with music
-#without lyrics: math problem answers(true, false), 
-#right words sequence percentage, time spent on task)
+#-after introduction hit enter to proceed further
+#-description in test round
+#-watch titles(hide where it appear to be redundant )
+#-bridge between trial and actual test (just with the titles)
+#-add comments
 
 define Start(param)
 {
@@ -48,34 +45,44 @@ define Start(param)
 		Hide(errorLabel)
 		gSubNum <- GetSubNum(gWindow)
 	}
-
-	noWordsTrack <- LoadSound("noWords.wav")
 	
 	gResultsFile <- FileOpenAppend("results/" + gSubNum + ".csv");
 	FilePrint(gResultsFile, "Correct answers;Total;Percent")
 	
-	gLable <- MakeLabel("Welcome to", gFont)
+	gLable <- MakeLabel("Welcome to Concentration Test", gFont)
 	Move(gLable, gWidth/2, 50)
 	
-	iLable2 <- MakeLabel("This test is aimed at", gFont)
+	iLable2 <- MakeLabel("This test is aimed mainly at testing your memory and ability to focus",gFont)
 	Move(iLable2, gWidth/2, 100)
+	#MessageBox("This test is aimed at testing your concentration while you perception may be affected by different background music", gWindow)
 	
-	iLable3 <- MakeLabel("You will now be asked to", gFont)
+	iLable3 <- MakeLabel("You will now be asked to give simple answers on the sequence of mathematical problems", gFont)
 	Move(iLable3, gWidth/2, 150)
 	
-	iLable4 <- MakeLabel("Please put your headphones on and click gogogo", gFont)
+	iLable4 <- MakeLabel("Where after the every answer you will get the simple word to remember,", gFont)
 	Move(iLable4, gWidth/2, 200)
+
+	iLable5 <- MakeLabel("and eventually recall every word in showed sequence writing it down.", gFont)
+	Move(iLable5, gWidth/2, 250)
+
+	iLable5 <- MakeLabel("To give you a glance the test round will be introduced. Please put headphones on and hit the enter to proceed.", gFont)
+	Move(iLable5, gWidth/2, 300)
+
+	iLable5 <- MakeLabel("Please put headphones on and press enter to proceed.", gFont)
+	Move(iLable5, gWidth/2, 300)
 	
 	AddObject(gLable, gWindow)
 	AddObject(iLable2, gWindow)
 	AddObject(iLable3, gWindow)
 	AddObject(iLable4, gWindow)
+	AddObject(iLable5, gWindow)
 	Draw()
-	Wait(1000)
+	Wait(10000)
 	
 	Hide(iLable2)
 	Hide(iLable3)
 	Hide(iLable4)
+	Hide(iLable5)
 	
 	currentTest <- RandomDiscrete(10)
 	
@@ -93,35 +100,19 @@ define Start(param)
 	
 	grSize <- 150
 	i <- 1
-	noLyricsMusic <- "noWords.wav"
-	lyricsMusic <- "germanWords.wav"
-	foreignLyricsMusic <- ""
+	trialIter <- 2
+	noLyricsMusic <- "noLyrics.wav"
+	lyricsMusic <- "germanLyrics.wav"
+	foreignLyricsMusic <- "foreignLyrics.wav"
+	trialMusic <- "trialMusic.wav"
+
+	ExecuteTest(trialMusic, trialIter)
 
 	ExecuteTest(noLyricsMusic, i)
 
-	#gSound <- LoadSound("noWords.wav")
-	#gPlay <- PlayBackground(gSound)
-	#ShowMathProblems(i)
-	#gShowedWords <- ListToString(gShowedWords)
-	#CheckWords(gShowedWords)
-	#Stop(gSound)
-
 	ExecuteTest(lyricsMusic, i)
-	#gSound <- LoadSound("noWords.wav")
-	#gPlay <- PlayBackground(gSound)
-	#ShowMathProblems(i)
-	#gShowedWords <- ListToString(gShowedWords)
-	#CheckWords(gShowedWords)
-	#Stop(gSound)
 
-	#ExecuteTest(foreignLyricsMusic, i)
-	#gSound <- LoadSound("noWords.wav")
-	#gPlay <- PlayBackground(gSound)
-	ShowMathProblems(i)
-	gShowedWords <- ListToString(gShowedWords)
-	CheckWords(gShowedWords)
-	#Stop(gSound)
-
+	ExecuteTest(foreignLyricsMusic, i)
 }
 
 define ShowMathProblems(iterator)
@@ -131,37 +122,34 @@ define ShowMathProblems(iterator)
 
 	circle1<- Circle (gWidth/2-grSize-50,480,grSize,gColorYel,1)
 	circ1Lable1 <- MakeLabel("if correct", gFont); Move(circ1Lable1, gWidth/2-grSize-50, 470)
-	circ1Lable2 <- MakeLabel("press A", gFont); Move(circ1Lable2, gWidth/2-grSize-50, 510)
+	circ1Lable2 <- MakeLabel("press Y", gFont); Move(circ1Lable2, gWidth/2-grSize-50, 510)
 	AddObject(circle1,gWindow) 
 	AddObject(circ1Lable1,gWindow)
 	AddObject(circ1Lable2,gWindow)
 	
 	circle2<- Circle (gWidth/2+grSize+50,480,grSize,gColorRed,1)
 	circ2Lable1 <- MakeLabel("if wrong", gFont); Move(circ2Lable1, gWidth/2+grSize+50, 470)
-	circ2Lable2 <- MakeLabel("press D", gFont); Move(circ2Lable2, gWidth/2+grSize+50, 510)
+	circ2Lable2 <- MakeLabel("press N", gFont); Move(circ2Lable2, gWidth/2+grSize+50, 510)
 	AddObject(circle2,gWindow)
 	AddObject(circ2Lable1, gWindow)
 	AddObject(circ2Lable2, gWindow)
 
-	while (iterator <= 2)
+	while (iterator <= 4)
 	{
-		#sound <- LoadSound("noWords.wav")
 		
-		#PlaySound(sound)
 		expressionItem <- Nth(gExpressionsList,iterator)
 		wordItem <- Nth(gWordsList, RandomDiscrete(100))
-		#gShowedWords <-[]
-		#gShowedWords <- PushOnEnd(gShowedWords, wordItem)
-
 		expressionLable <- MakeLabel(expressionItem, gFontExp); Move(expressionLable, gWidth/2, 150)
 		wordLable <- MakeLabel(wordItem, gFontExp)
-		AddObject(expressionLable, gWindow)
-		Draw()
+		#AddObject(expressionLable, gWindow)
+		#Draw()
+		DrawAndWait(expressionLable, gWindow, 500)
+		#Hide(expressionLable)
 		
-		response <-Uppercase(WaitForListKeyPress(["A","D","L"]))
+		response <- Uppercase(WaitForListKeyPress(["Y","N","Q"]))
 		##L = quit
-		if(response != "L"){
-			if(response == "A"){
+		if(response != "Q"){
+			if(response == "Y"){
 				answer <- "1"
 			}else{
 				answer <- "0"
@@ -174,21 +162,21 @@ define ShowMathProblems(iterator)
 				gcorrectAnswCount <- gcorrectAnswCount + 1
 				
 			}else{
-				iLable2 <- MakeLabel("WRONG", gErrorFont)
+				iLable2 <- MakeLabel("Incorrect", gErrorFont)
 			}
 			Move(iLable2, gWidth/2, 300)
 			DrawAndWait(iLable2, gWindow, 500)
 
 			Move(wordLable, gWidth/2, 300)
-			DrawAndWait(wordLable, gWindow, 500)
+			DrawAndWait(wordLable, gWindow, 2000)
 			gShowedWords <- PushOnEnd(gShowedWords, wordItem)
 			
 			iterator <- iterator + 1
 		}else{
-			iterator<- 99999
+			iterator <- 99999
 		}
-
 	}
+
 	FilePrint(gResultsFile, gcorrectAnswCount + ";5;" + ((gcorrectAnswCount/5)*100))
 	return gShowedWords
 }
@@ -210,29 +198,34 @@ define CheckWords(lst)
     AddObject(tb,gWindow)
     Move(tb,gWidth/2 - 200,480)
     Show(tb)
-	gInput <- GetInput(tb, "<return>")
+	gInput <- Uppercase(GetInput(tb, "<return>"))
 	#gShowedWords <- ListToString(gShowedWords)
 
 	if(gInput==lst)
 	{
-		answer <- "1"
-		label <- MakeLabel("Correct", gCorrectFont)		
+		answer <- "correct"
+		#label <- MakeLabel("Correct", gCorrectFont)		
 	}else{
-		answer <- "0"
-		label <- MakeLabel("WRONG", gErrorFont)
+		answer <- "wrong"
+		#label <- MakeLabel("Incorrect", gErrorFont)
 	}
-
-	Move(label, gWidth/2, 300)
-	DrawAndWait(label, gWindow, 500)
+	FilePrint(gResultsFile, answer)
+	#Move(label, gWidth/2, 300)
+	#DrawAndWait(label, gWindow, 500)
 	Hide(tb)
 }
 
 define ExecuteTest(sound, iterator)
 {
+	startTime <- GetTime()
 	track <- LoadSound(sound)
 	play <- PlayBackground(track)
+	FilePrint(gResultsFile, sound)
 	ShowMathProblems(iterator)
 	gShowedWords <- ListToString(gShowedWords)
 	CheckWords(gShowedWords)
 	Stop(track)
+	finishTime <- GetTime()
+	gTimeTaken <- finishTime - startTime
+	FilePrint(gResultsFile, gTimeTaken)
 }

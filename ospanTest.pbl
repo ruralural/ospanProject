@@ -2,10 +2,6 @@
 
 #lst:
 #-add time limitation for test(1.5min max)
-#-after introduction hit enter to proceed further
-#-description in test round
-#-watch titles(hide where it appear to be redundant )
-#-bridge between trial and actual test (just with the titles)
 #-add comments
 
 define Start(param)
@@ -67,10 +63,10 @@ define Start(param)
 	iLable3 <- MakeLabel("You will now be asked to give simple answers on the sequence of mathematical problems", gFont)
 	Move(iLable3, gWidth/2, 150)
 	
-	iLable4 <- MakeLabel("Where after the every answer you will get the simple word to remember,", gFont)
+	iLable4 <- MakeLabel("Followed by simple words you should keep in mind,", gFont)
 	Move(iLable4, gWidth/2, 200)
 
-	iLable5 <- MakeLabel("and eventually recall every word in showed sequence writing it down.", gFont)
+	iLable5 <- MakeLabel("eventually you will recall every occured word and to write it down.", gFont)
 	Move(iLable5, gWidth/2, 250)
 
 	iLable6 <- MakeLabel("To give you a glance the test round will be introduced.", gFont)
@@ -87,7 +83,7 @@ define Start(param)
 	AddObject(iLable6, gWindow)
 	AddObject(iLable7, gWindow)
 	Draw()
-	Wait(10000) #CHANGE FOR PRESSING ANY KEY ACTION TO proceed
+	Wait(1000)
 	
 	Hide(iLable2)
 	Hide(iLable3)
@@ -95,10 +91,12 @@ define Start(param)
 	Hide(iLable5)
 	Hide(iLable6)
 	Hide(iLable7)
+
+	WaitForKeyDown("<return>")
 	
 	currentTest <- RandomDiscrete(10)
 	
-	currentTest <- currentTest +1
+	currentTest <- currentTest + 1
 	if (currentTest > 10){
 		currentTest <- 0
 	}
@@ -116,7 +114,23 @@ define Start(param)
 	foreignLyricsMusic <- "foreignLyrics.wav"
 	trialMusic <- "trialMusic.wav"
 
+	gLable <- MakeLabel("Welcome to Trial Round", gFont)
+	Move(gLable, gWidth/2, 100)
+	iLable2 <- MakeLabel("Please choose the right answer",gFont)
+	Move(iLable2, gWidth/2, gHeight/2 - 50)
+	AddObject(gLable, gWindow); 
+	AddObject(iLable2,gWindow)
+	DrawAndWait(iLable2, gWindow, 3000)
 	ExecuteTest(trialMusic, trialIter)
+
+	gLable <- MakeLabel("You are now about to start the main part of the test.", gFont)
+	Move(gLable, gWidth/2, gHeight/2)
+	iLable2 <- MakeLabel("Please press enter when you are ready.", gFont)
+	Move(iLable2, gWidth/2, gHeight/2)
+	DrawAndWait(gLable, gWindow, 3000)
+	DrawAndWait(iLable2, gWindow, 1000)
+
+	WaitForKeyDown("<return>")
 
 	ExecuteTest(noLyricsMusic, i)
 
@@ -149,7 +163,7 @@ define ShowMathProblems(iterator)
 		
 		expressionItem <- Nth(gExpressionsList,iterator)
 		wordItem <- Nth(gWordsList, RandomDiscrete(100))
-		expressionLable <- MakeLabel(expressionItem, gFontExp); Move(expressionLable, gWidth/2, 150)
+		expressionLable <- MakeLabel(expressionItem, gFontExp); Move(expressionLable, gWidth/2, 200)
 		wordLable <- MakeLabel(wordItem, gFontExp)
 		#AddObject(expressionLable, gWindow)
 		#Draw()
@@ -201,7 +215,7 @@ define DrawAndWait(object, window, time)
 
 define CheckWords(lst)
 {
-	gLable <- MakeLabel("Enter sequence of words withouth spaces and hit the enter", gFont)
+	gLable <- MakeLabel("Type the sequence of occured words without spaces and press the enter", gFont)
 	Move(gLable, gWidth/2, 50)
 	AddObject(gLable, gWindow)
 	tb <-MakeTextBox("",gFontExp,400,400)
@@ -223,6 +237,7 @@ define CheckWords(lst)
 	#Move(label, gWidth/2, 300)
 	#DrawAndWait(label, gWindow, 500)
 	Hide(tb)
+	Hide(gLable)
 }
 
 define ExecuteTest(sound, iterator)

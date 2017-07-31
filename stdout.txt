@@ -1,0 +1,11 @@
+SUCCESS at getting display mode?:0
+1920,1080,60
+Initializing 1920--1080
+Driver name (0): direct3d
+Driver name (1): opengl
+Driver name (2): opengles2
+Driver name (3): software
+SUCCESS at getting display mode?:0
+1920,1080,60
+SUCCESS at getting display mode?:0
+1920,1080,60

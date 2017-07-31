@@ -1,0 +1,286 @@
+#=====TODO====
+
+define Start(param)
+{
+	##Setup the screen
+	gBG <- MakeColor("oldlace") 
+	gWindow <- MakeWindow("oldlace")
+
+	##Screen dimensions
+	gWidth <- Nth(GetCurrentScreenResolution(), 1)
+	gHeight <- Nth(GetCurrentScreenResolution(), 2)
+
+	#Palette
+	gBG <- MakeColor("oldlace")
+	gFG <- MakeColor("lightblue4")
+	gColorRed <- MakeColor("lightcoral")
+	gColorYel <- MakeColor("lightgoldenrod1")
+	
+	##Fontsize and font
+	gFontSize <- Round(gWidth/40)
+	gFont <- MakeFont("Calibri.ttf", 0, gFontSize, gFG,gBG,0)
+	gErrorFont <- MakeFont("Calibri.ttf", 0, gFontSize, gColorRed, gColorRed, 0)
+	gCorrectFont <- MakeFont("Calibri.ttf", 0, gFontSize, gColorYel, gColorYel, 0)
+	grSize <- 150
+
+	##Font settings for expression
+	gFontSizeExp <- 50
+	gFontExp <- MakeFont("Calibri.ttf", 0, gFontSizeExp, gFG,gBG,0)
+	
+	#Iter vars
+	i <- 1
+	trialIter <- 2
+
+	#Get ID 
+	gSubNum <- GetSubNum(gWindow)
+
+	#Deal with absence of ID
+	while(gSubNum == "") 
+	{
+		errorLabel <- MakeLabel("Bitte gib deine Identifikation-Nummer ein", gErrorFont)
+		Move(errorLabel, gWidth/2, 400)
+		AddObject(errorLabel, gWindow)
+		Draw()
+		Wait(1500)
+		Hide(errorLabel)
+		gSubNum <- GetSubNum(gWindow)
+	}
+	
+	#Compose CSV
+	gResultsFile <- FileOpenWrite("results/" + gSubNum + ".csv")
+	FilePrint(gResultsFile, "Correct answers;Total;Percent")
+	
+	gLable <- MakeLabel("Welcome to Operation Span Test", gFont)
+	Move(gLable, gWidth/2, gHeight/2 - 450)
+	
+	#iLable2 <- MakeLabel("The test is aimed at testing your working memory",gFont)
+	#Move(iLable2, gWidth/2, gHeight/2 -400)
+	#MessageBox("This test is aimed at testing your concentration while you perception may be affected by different background music.", gWindow)
+	
+	iLable3 <- MakeLabel("You will be asked to give 'Yes' or 'No' answers on three sets of mathematical problems", gFont)
+	Move(iLable3, gWidth/2, gHeight/2 - 50)
+
+    iLable33 <- MakeLabel("while different audio stimuli will be played in the background.", gFont)
+	Move(iLable33, gWidth/2, gHeight/2)
+	
+	iLable4 <- MakeLabel("Each mathematical equation will be followed by simple word you shall keep in mind,", gFont)
+	Move(iLable4, gWidth/2, gHeight/2 + 100)
+
+	iLable5 <- MakeLabel("so to be able eventually recall every occured word in the right sequence and write it down.", gFont)
+	Move(iLable5, gWidth/2, gHeight/2 + 150)
+
+	iLable6 <- MakeLabel("To give you a glance the test round will be introduced.", gFont)
+	Move(iLable6, gWidth/2, gHeight/2 + 250)
+
+	iLable7 <- MakeLabel("Please put headphones on and press enter key to proceed.", gFont)
+	Move(iLable7, gWidth/2, gHeight/2 + 300)
+	
+	AddObject(gLable, gWindow)
+	#AddObject(iLable2, gWindow)
+	AddObject(iLable3, gWindow)
+    AddObject(iLable33, gWindow)
+	AddObject(iLable4, gWindow)
+	AddObject(iLable5, gWindow)
+	AddObject(iLable6, gWindow)
+	AddObject(iLable7, gWindow)
+	Draw()
+	Wait(1000)
+	
+	#Hide(iLable2)
+	Hide(iLable3)
+    Hide(iLable33)
+	Hide(iLable4)
+	Hide(iLable5)
+	Hide(iLable6)
+	Hide(iLable7)
+
+	WaitForKeyDown("<return>")
+	
+	gCurrentTest <- RandomDiscrete(10)
+	
+	gCurrentTest <- gCurrentTest + 1
+	if (gCurrentTest > 10){
+		gCurrentTest <- 0
+	}
+	
+	#Defining all needed arrays
+	#gExpressionsList <- FileReadList("assets/Expressions" + gCurrentTest +".txt")
+	#gSolutionsList <- FileReadList("assets/Solutions" + gCurrentTest + ".txt")
+	#gExpressionsList <- FileReadList("assets/ExpressionsShort.txt")
+	#gSolutionsList <- FileReadList("assets/SolutionsShort.txt")
+	gWordsList <- FileReadList("assets/wordsLst.txt")
+	
+	#Instantiation of the audio stimuli
+	noLyricsMusic <- "noLyrics.wav"
+	lyricsMusic <- "germanLyrics.wav"
+	foreignLyricsMusic <- "foreignLyrics.wav"
+	trialMusic <- "trialMusic.wav"
+
+	gLable <- MakeLabel("Welcome to Trial Round", gFont)
+	Move(gLable, gWidth/2, 100)
+	iLable2 <- MakeLabel("Please choose the right answer and pay attention to the showed words.",gFont)
+	Move(iLable2, gWidth/2, gHeight/2 - 50)
+	AddObject(gLable, gWindow); 
+	AddObject(iLable2,gWindow)
+	DrawAndWait(iLable2, gWindow, 3000)
+	ExecuteTest(trialMusic, trialIter)
+
+	gLable <- MakeLabel("You are now about to proceed to the main part of the test.", gFont)
+	Move(gLable, gWidth/2, gHeight/2)
+	iLable2 <- MakeLabel("Please press  enter key when you feel ready.", gFont)
+	Move(iLable2, gWidth/2, gHeight/2)
+	DrawAndWait(gLable, gWindow, 3000)
+	DrawAndWait(iLable2, gWindow, 1000)
+
+	WaitForKeyDown("<return>")
+
+	ExecuteTest(noLyricsMusic, i)
+
+	ExecuteTest(lyricsMusic, i)
+
+	ExecuteTest(foreignLyricsMusic, i)
+
+	finiLable <- MakeLabel("Thank You for Your Participation. Press Q to quit.", gFont)
+	Move(finiLable, gWidth/2, gHeight/2)
+	DrawAndWait(finiLable, gWindow, 1000)
+	WaitForKeyDown("Q")
+}
+
+define ShowMathProblems(iterator)
+{
+	gShowedWords <-[]
+	gcorrectAnswCount <- 0
+
+    gExpressionsList <- FileReadList("assets/Expressions" + gCurrentTest +".txt")
+	gSolutionsList <- FileReadList("assets/Solutions" + gCurrentTest + ".txt")
+
+	circle1<- Circle (gWidth/2-grSize-50,480,grSize,gColorYel,1)
+	circ1Lable1 <- MakeLabel("if correct", gFont); Move(circ1Lable1, gWidth/2-grSize-50, 470)
+	circ1Lable2 <- MakeLabel("press Y", gFont); Move(circ1Lable2, gWidth/2-grSize-50, 510)
+	AddObject(circle1,gWindow) 
+	AddObject(circ1Lable1,gWindow)
+	AddObject(circ1Lable2,gWindow)
+	
+	circle2<- Circle (gWidth/2+grSize+50,480,grSize,gColorRed,1)
+	circ2Lable1 <- MakeLabel("if wrong", gFont); Move(circ2Lable1, gWidth/2+grSize+50, 470)
+	circ2Lable2 <- MakeLabel("press N", gFont); Move(circ2Lable2, gWidth/2+grSize+50, 510)
+	AddObject(circle2,gWindow)
+	AddObject(circ2Lable1, gWindow)
+	AddObject(circ2Lable2, gWindow)
+
+	while (iterator <= 4)
+	{
+		
+		expressionItem <- Nth(gExpressionsList,iterator)
+		wordItem <- Nth(gWordsList, RandomDiscrete(100))
+		expressionLable <- MakeLabel(expressionItem, gFontExp); Move(expressionLable, gWidth/2, 200)
+		wordLable <- MakeLabel(wordItem, gFontExp)
+		#AddObject(expressionLable, gWindow)
+		#Draw()
+		DrawAndWait(expressionLable, gWindow, 500)
+		#Hide(expressionLable)
+		
+		response <- Uppercase(WaitForListKeyPress(["Y","N","Q"]))
+		##L = quit
+		if(response != "Q"){
+			if(response == "Y"){
+				answer <- "1"
+			}else{
+				answer <- "0"
+			}
+
+			rightAnswer <- Nth(gSolutionsList, iterator)
+
+			if(answer == rightAnswer){
+				iLable2 <- MakeLabel("Correct", gCorrectFont)
+				gcorrectAnswCount <- gcorrectAnswCount + 1
+				
+			}else{
+				iLable2 <- MakeLabel("Incorrect", gErrorFont)
+			}
+			Move(iLable2, gWidth/2, 300)
+			DrawAndWait(iLable2, gWindow, 500)
+
+			Move(wordLable, gWidth/2, 300)
+			DrawAndWait(wordLable, gWindow, 2000)
+			gShowedWords <- PushOnEnd(gShowedWords, wordItem)
+			
+			iterator <- iterator + 1
+		}else{
+			iterator <- 99999
+		}
+	}
+
+	FilePrint(gResultsFile, gcorrectAnswCount + ";4;" + ((gcorrectAnswCount/4)*100))
+	return gShowedWords
+}
+
+define DrawAndWait(object, window, time)
+{
+	AddObject(object, window)
+	Draw()
+	Wait(time)
+	Hide(object)
+}
+
+define CheckWords(lst)
+{
+	gLable <- MakeLabel("Type the sequence of occured words without spaces and press the enter", gFont)
+	Move(gLable, gWidth/2, 50)
+	AddObject(gLable, gWindow)
+	tb <-MakeTextBox("",gFontExp,400,400)
+    AddObject(tb,gWindow)
+    Move(tb,gWidth/2 - 200,480)
+    Show(tb)
+	gInput <- Uppercase(GetInput(tb, "<return>"))
+	#gShowedWords <- ListToString(gShowedWords)
+
+	if(gInput==lst)
+	{
+		answer <- "correct"
+		#label <- MakeLabel("Correct", gCorrectFont)		
+	}else{
+		answer <- "wrong"
+		#label <- MakeLabel("Incorrect", gErrorFont)
+	}
+    words <- gInput
+	FilePrint(gResultsFile, answer)
+    FilePrint(gResultsFile, words)
+	#Move(label, gWidth/2, 300)
+	#DrawAndWait(label, gWindow, 500)
+	Hide(tb)
+	Hide(gLable)
+    #FilePrint(gResultsFile, gcorrectAnswCount + ";4;" + ((gcorrectAnswCount/4)*100))
+    
+}
+
+define ChangeLst(iter){
+    gCurrentTest <- RandomDiscrete(10)
+    current <- RandomDiscrete(10)
+    gCurrentTest <- gCurrentTest + iter
+	if (gCurrentTest > 10){
+		gCurrentTest <- RandomDiscrete(10)
+	}
+    
+
+    return gCurrentTest
+}
+
+define ExecuteTest(sound, iterator)
+{
+	startTime <- GetTime()
+	track <- LoadSound(sound)
+    #gCurrentTest <- RandomDiscrete(10)
+    ChangeLst(iterator)
+	play <- PlayBackground(track)
+	FilePrint(gResultsFile, sound)
+	ShowMathProblems(iterator)
+	gShowedWords <- ListToString(gShowedWords)
+	CheckWords(gShowedWords)
+	Stop(track)
+	finishTime <- GetTime()
+	gTimeTaken <- finishTime - startTime
+	FilePrint(gResultsFile, gTimeTaken)
+    #ChangeLst(gCurrentTest)
+    
+}
